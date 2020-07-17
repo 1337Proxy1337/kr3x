@@ -87,7 +87,7 @@ module.exports.run = async (bot, message, args) => {
 
                 dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
                 dailyembed.setColor("#db9c1d");
-                return message.chanel.send(dailyembed);
+                return message.channel.send(dailyembed)
     
             }
             
