@@ -7,7 +7,7 @@ const { time } = require("console");
 
 module.exports.run = async (bot, message, args) => {
 
-    let timeout = 1200;
+    let timeout = 12000;
     let reward = 10;
 
     let salaryembed = new Discord.MessageEmbed();
@@ -38,7 +38,7 @@ module.exports.run = async (bot, message, args) => {
             });
         }
 
-        salaryembed.addField("You cashed out", `your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
+        salaryembed.addField("You cashed out", `your salary of ${reward}! Your new balance is ${money[message.author.id].money} Coins! `)
         salaryembed.setColor("#db9c1d");
         return message.channel.send(salaryembed);
 
@@ -59,7 +59,7 @@ module.exports.run = async (bot, message, args) => {
                 if(err) console.log(err);
             });
 
-            salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
+            salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money }Coins! `)
             salaryembed.setColor("#db9c1d");
             return message.channel.send(salaryembed);
 
@@ -70,7 +70,7 @@ module.exports.run = async (bot, message, args) => {
 
                 salaryembed.setColor("#e01919");
                 salaryembed.addField("Work failed", `**You already worked!**`)
-                salaryembed.addField("Work again in",  `${time.hours}h ${time.minutes}m ${time.seconds}s`);
+                salaryembed.addField("Work again in",  `${time.minutes}m ${time.seconds}s`);
                 return message.channel.send(salaryembed);
 
             } else {
@@ -85,7 +85,7 @@ module.exports.run = async (bot, message, args) => {
                     if(err) console.log(err);       
                 });
 
-                salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
+                salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money} Coins! `)
                 salaryembed.setColor("#db9c1d");
                 return message.channel.send(salaryembed)
     
