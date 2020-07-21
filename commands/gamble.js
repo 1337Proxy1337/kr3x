@@ -14,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
 
       wingambleembed.setColor("#00ff44");
   
-    var maxBet = 25
+    var maxBet = 9999999
     
 
     if(!money[message.author.id] || money[message.author.id].money <= 0) return message.reply("you don't have any coins.");
