@@ -1,4 +1,5 @@
 const fs = require("fs");
+const money = require("../money.json");
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 const botconfig = require("../botconfig.json");
