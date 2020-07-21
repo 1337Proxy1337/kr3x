@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const money = require("../money.json");
 const fs = require("fs");
 
 module.exports.run = async (bot, message, args) => {
@@ -13,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
 
       wingambleembed.setColor("#00ff44");
   
-    var maxBet = 9999999
+    var maxBet = 9999999999
     
 
     if(!money[message.author.id] || money[message.author.id].money <= 0) return message.reply("you don't have any coins.");
@@ -36,9 +37,10 @@ module.exports.run = async (bot, message, args) => {
     var pick = chances[Math.floor(Math.random() * chances.length)]
 
     if(pick === "lose") {
-        money[message.author.id].money -= bet, (err) => {
+        money[message.author.id].money -= bet;
+        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
             if(err) console.log(err);
-        }; 
+        }); 
         
         lostgambleembed.addFields( (
         { name: 'You Lost! ', value: `You lost ${bet} coins by gambling!`}
@@ -46,9 +48,10 @@ module.exports.run = async (bot, message, args) => {
       )
        return message.reply(lostgambleembed);
     } else {
-        money[message.author.id].money += bet += bet, (err) => {
+        money[message.author.id].money += bet += bet;
+        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
             if(err) console.log(err);
-       }; 
+        }); 
         
               wingambleembed.addFields( (
           { name: 'You Won!', value: `You gained ${bet * 1} coins by gambling!`}

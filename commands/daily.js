@@ -19,22 +19,23 @@ module.exports.run = async (bot, message, args) => {
             name: bot.users.cache.get(message.author.id).tag,
             money: reward
         }
-      , (err) => {
+        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
             if(err) console.log(err);
-        };
+        });
 
         if (!cooldowns[message.author.id]) {
             cooldowns[message.author.id] = {
                 name: bot.users.cache.get(message.author.id).tag,
                 daily: Date.now()
             }
-            ,      (err) => {
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
                 if(err) console.log(err);       
-            };
+            });
         } else {
-            cooldowns[message.author.id] = Date.now(), (err) => {
+            cooldowns[message.author.id] = Date.now();
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
                 if(err) console.log(err);       
-            };
+            });
         }
 
         dailyembed.addField("Money collected", `You collected your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
@@ -49,13 +50,14 @@ module.exports.run = async (bot, message, args) => {
                 name: bot.users.cache.get(message.author.id).tag,
                 daily: Date.now()
             }
-               , (err) => {
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
                 if(err) console.log(err);       
-            };
+            });
 
-            money[message.author.id].money += reward, (err) => {
+            money[message.author.id].money += reward;
+            fs.writeFile("./money.json", JSON.stringify(money), (err) => {
                 if(err) console.log(err);
-            };
+            });
 
             dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}coins!! `)
             dailyembed.setColor("#db9c1d");
@@ -73,13 +75,15 @@ module.exports.run = async (bot, message, args) => {
 
             } else {
 
-                money[message.author.id].money += reward; (err) => {
+                money[message.author.id].money += reward;
+                fs.writeFile("./money.json", JSON.stringify(money), (err) => {
                     if(err) console.log(err);
-                };
+                });
 
-                cooldowns[message.author.id] = Date.now(); (err) => {
+                cooldowns[message.author.id] = Date.now();
+                fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
                     if(err) console.log(err);       
-                };
+                });
 
                 dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
                 dailyembed.setColor("#db9c1d");
