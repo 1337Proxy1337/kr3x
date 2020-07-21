@@ -1,7 +1,6 @@
 const Discord = require("discord.js")
 const fs = require("fs")
 const ms = require("parse-ms");
-const cooldowns = require("../cooldowns.json");
 const { time } = require("console");
 
 module.exports.run = async (bot, message, args) => {
