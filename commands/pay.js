@@ -28,18 +28,18 @@ module.exports.run = async (bot, message, args) => {
 
         money[message.author.id].money -= parseInt(args[1])
 
-       fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+       ,(err) => {
            if(err) console.log(err);
-       });
+       };
 
    } else {
 
     money[user.id].money += parseInt(args[1]);
     money[message.author.id].money -= parseInt(args[1]);
 
-    fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+    (err) => {
         if(err) console.log(err);
-       });
+       };
    }
    adminpayembed.setTitle("Payout!")
    adminpayembed.addFields( (

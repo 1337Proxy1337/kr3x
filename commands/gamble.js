@@ -37,10 +37,9 @@ module.exports.run = async (bot, message, args) => {
     var pick = chances[Math.floor(Math.random() * chances.length)]
 
     if(pick === "lose") {
-        money[message.author.id].money -= bet;
-        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+        money[message.author.id].money -= bet, (err) => {
             if(err) console.log(err);
-        }); 
+        }; 
         
         lostgambleembed.addFields( (
         { name: 'You Lost! ', value: `You lost ${bet} coins by gambling!`}
@@ -48,10 +47,9 @@ module.exports.run = async (bot, message, args) => {
       )
        return message.reply(lostgambleembed);
     } else {
-        money[message.author.id].money += bet += bet;
-        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+        money[message.author.id].money += bet += bet, (err) => {
             if(err) console.log(err);
-        }); 
+       }; 
         
               wingambleembed.addFields( (
           { name: 'You Won!', value: `You gained ${bet * 1} coins by gambling!`}
