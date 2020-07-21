@@ -19,15 +19,26 @@ module.exports.run = async (bot, message, args) => {
             name: bot.users.cache.get(message.author.id).tag,
             money: reward
         }
+        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+            if(err) console.log(err);
+        });
+
         if (!cooldowns[message.author.id]) {
             cooldowns[message.author.id] = {
                 name: bot.users.cache.get(message.author.id).tag,
                 daily: Date.now()
             }
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
+                if(err) console.log(err);       
+            });
         } else {
+            cooldowns[message.author.id] = Date.now();
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
+                if(err) console.log(err);       
+            });
         }
 
-        salaryembed.addField("Money collected", `You collected your salary of ${reward}! Your new balance is ${money[message.author.id].money}! `)
+        salaryembed.addField("You cashed out", `your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
         salaryembed.setColor("#db9c1d");
         return message.channel.send(salaryembed);
 
@@ -39,8 +50,16 @@ module.exports.run = async (bot, message, args) => {
                 name: bot.users.cache.get(message.author.id).tag,
                 daily: Date.now()
             }
+            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
+                if(err) console.log(err);       
+            });
+
             money[message.author.id].money += reward;
-            salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money}coins!! `)
+            fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+                if(err) console.log(err);
+            });
+
+            salaryembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
             salaryembed.setColor("#db9c1d");
             return message.channel.send(salaryembed);
 
@@ -50,16 +69,23 @@ module.exports.run = async (bot, message, args) => {
                 let time = ms(timeout - (Date.now() - cooldowns[message.author.id].daily));
 
                 salaryembed.setColor("#e01919");
-                salaryembed.addField("Cash out failed", `**You already collected your daily reward!**`)
+                salaryembed.addField("Work failed", `**You already worked!**`)
                 salaryembed.addField("Work again in",  `${time.hours}h ${time.minutes}m ${time.seconds}s`);
                 return message.channel.send(salaryembed);
 
             } else {
 
                 money[message.author.id].money += reward;
+                fs.writeFile("./money.json", JSON.stringify(money), (err) => {
+                    if(err) console.log(err);
+                });
 
                 cooldowns[message.author.id] = Date.now();
-                dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
+                fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
+                    if(err) console.log(err);       
+                });
+
+                dailyembed.addField("You cashed out", ` your salary of ${reward}! Your new balance is ${money[message.author.id].money}Coins! `)
                 dailyembed.setColor("#db9c1d");
                 return message.channel.send(salaryembed)
     
@@ -74,5 +100,5 @@ module.exports.run = async (bot, message, args) => {
     //name of command and aliases
     module.exports.help = {
         name: "work",
-        aliases: ["job"]
+        aliases: []
     }
