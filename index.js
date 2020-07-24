@@ -2,11 +2,9 @@ const Discord = require("discord.js");
 const bot = new Discord.Client({ disableEveryone: false });
 const botconfig = require("./botconfig.json");
 const fs = require("fs");
-const message = require("")
 
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
-
 
 // Make Bot Read Commands.
 fs.readdir("./commands/", (err, files) => {
