@@ -66,6 +66,10 @@ const Data = require("../models/data.js");
     
                   )
         }
+    }
+}
+    )
+}
     
 
       
@@ -75,7 +79,3 @@ const Data = require("../models/data.js");
         name: "daily",
         aliases: []
     }
-}
-    }
-
-    )}
