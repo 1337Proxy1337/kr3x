@@ -1,11 +1,22 @@
 const Discord = require("discord.js")
 const ms = require("parse-ms");
 const { time } = require("console");
+const botconfig = require("../botconfig.json")
 
 module.exports.run = async (bot, message, args) => {
 
+    // database
+mongoose.connect(botconfig.mongoPass, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+// MODELS
+const Data = require("../models/data.js");
+
+
     let timeout = 86400000;
-    let reward = 50;
+    let reward = 250;
 
     let dailyembed = new Discord.MessageEmbed();
     dailyembed.setTitle("Daily reward!")
@@ -57,62 +68,14 @@ module.exports.run = async (bot, message, args) => {
         }
     
 
-        if (!cooldowns[message.author.id]) {
-
-            cooldowns[message.author.id] = {
-                name: bot.users.cache.get(message.author.id).tag,
-                daily: Date.now()
-            }
-            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
-                if(err) console.log(err);       
-            });
-
-            money[message.author.id].money += reward;
-            fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-                if(err) console.log(err);
-            });
-
-            dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}coins!! `)
-            dailyembed.setColor("#db9c1d");
-            return message.channel.send(dailyembed);
-
-        } else {
-            if(timeout - (Date.now() - cooldowns[message.author.id].daily) > 0) {
-
-                let time = ms(timeout - (Date.now() - cooldowns[message.author.id].daily));
-
-                dailyembed.setColor("#e01919");
-                dailyembed.addField("Daily cash out failed", `**You already collected your daily reward!**`)
-                dailyembed.addField("Collect again in",  `${time.hours}h ${time.minutes}m ${time.seconds}s`);
-                return message.channel.send(dailyembed);
-
-            } else {
-
-                money[message.author.id].money += reward;
-                fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-                    if(err) console.log(err);
-                });
-
-                cooldowns[message.author.id] = Date.now();
-                fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
-                    if(err) console.log(err);       
-                });
-
-                dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
-                dailyembed.setColor("#db9c1d");
-                 message.channel.send(dailyembed)
-    
-            }
-            
-        }
-        //end of unreachable code
-
-    }
+      
     
 
     module.exports.help = {
         name: "daily",
         aliases: []
     }
-})
 }
+    }
+
+    )}
