@@ -4,6 +4,8 @@ const { time } = require("console");
 const botconfig = require("../botconfig.json")
 const mongoose = require("mongoose");
 
+let user = message.author
+
 module.exports.run = async (bot, message, args) => {
 
     // database
