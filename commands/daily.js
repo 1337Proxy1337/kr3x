@@ -1,8 +1,5 @@
 const Discord = require("discord.js")
-const fs = require("fs")
-const money = require ("../money.json")
 const ms = require("parse-ms");
-const cooldowns = require("../cooldowns.json");
 const { time } = require("console");
 
 module.exports.run = async (bot, message, args) => {
@@ -13,36 +10,52 @@ module.exports.run = async (bot, message, args) => {
     let dailyembed = new Discord.MessageEmbed();
     dailyembed.setTitle("Daily reward!")
 
-    if(!money[message.author.id]) {
+    let collectagainembed = new Discord.MessageEmbed();
+    collectagainembed.setTitle("Daily reward!")
 
-        money[message.author.id] = {
-            name: bot.users.cache.get(message.author.id).tag,
-            money: reward
-        }
-        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-            if(err) console.log(err);
-        });
+    let balanceembed = new Discord.MessageEmbed();
+    balanceembed.setTitle("Balance")
 
-        if (!cooldowns[message.author.id]) {
-            cooldowns[message.author.id] = {
-                name: bot.users.cache.get(message.author.id).tag,
-                daily: Date.now()
-            }
-            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
-                if(err) console.log(err);       
-            });
+    Data.findOne({
+        userID: user.id
+    }, (err, data) => {
+        if(err) console.log(err);
+        if(!data) {
+            const newData = new Data({
+                name: message.author.username,
+                userID: message.author.id,
+                lb: "all",
+                money: reward,
+                daily: Date.now(),
+            })
+            newData.save().catch(err => console.log(err));
+            balanceembed.addFields( (
+          { name: 'You have', value: `${reward} Coins!` }
+        )
+        )
+            message.channel.send(balanceembed)
         } else {
-            cooldowns[message.author.id] = Date.now();
-            fs.writeFile("./cooldowns.json", JSON.stringify(cooldowns), (err) => {
-                if(err) console.log(err);       
-            });
+            if(timeout - (Date.now() - data.daily) > 0) {
+            let time = ms(timeout - (Date.now() - data.daily))
+             message.reply(collectagainembed);
+        } else {
+         data.money += reward;
+         data.daily = Date.now();
+         data.save().catch(err => console.log(err));
+         
+          message.reply(dailyembed); 
+
+         collectagainembed.addFields( 
+            { name: 'You already collected your daily reward!', value: `collect again in ${time.hours}h ${time.minutes}m ${time.seconds}s` }
+          
+          )          
+
+                  balanceembed.addFields( 
+      { name: 'You Have', value: `${data.money} Coins!` } 
+    
+                  )
         }
-
-        dailyembed.addField("Money collected", `You collected your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
-        dailyembed.setColor("#db9c1d");
-        return message.channel.send(dailyembed);
-
-    } else {
+    
 
         if (!cooldowns[message.author.id]) {
 
@@ -87,18 +100,19 @@ module.exports.run = async (bot, message, args) => {
 
                 dailyembed.addField("You cashed out", ` your daily reward of ${reward}! Your new balance is ${money[message.author.id].money}! `)
                 dailyembed.setColor("#db9c1d");
-                return message.channel.send(dailyembed)
+                 message.channel.send(dailyembed)
     
             }
             
         }
-
-
-    }
+        //end of unreachable code
 
     }
-    //name of command and aliases
+    
+
     module.exports.help = {
         name: "daily",
         aliases: []
     }
+})
+}

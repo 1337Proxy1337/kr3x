@@ -70,7 +70,7 @@ module.exports.run = async (bot, message, args) => {
 
                 salaryembed.setColor("#e01919");
                 salaryembed.addField("Work failed", `**You already worked!**`)
-                salaryembed.addField("Work again in",  `${time.hours}h ${time.minutes}m ${time.seconds}s`);
+                salaryembed.addField("Work again in",  `${time.minutes}m ${time.seconds}s`);
                 return message.channel.send(salaryembed);
 
             } else {
