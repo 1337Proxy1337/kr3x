@@ -7,6 +7,7 @@ const message = require("")
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 
+let = 
 
 // Make Bot Read Commands.
 fs.readdir("./commands/", (err, files) => {
