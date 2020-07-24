@@ -7,6 +7,8 @@ bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 
 
+let user = message.author
+
 // Make Bot Read Commands.
 fs.readdir("./commands/", (err, files) => {
     if(err) console.log(err);
