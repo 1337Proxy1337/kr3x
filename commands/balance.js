@@ -42,7 +42,6 @@ if(!args[0]) {
         { name: 'You Have', value: `${newData.money} Coins!` }
       )
       )
-          return message.channel.send(balanceembed)
       } else {
                     balanceembed.addFields( (
         { name: 'You Have', value: `${data.money} Coins!` }

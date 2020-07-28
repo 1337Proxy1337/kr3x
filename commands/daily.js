@@ -1,9 +1,11 @@
 const Discord = require("discord.js")
 const ms = require("parse-ms");
+const { time } = require("console")
 const botconfig = require("../botconfig.json")
 const mongoose = require("mongoose");
 
-module.exports.run = async (bot, message, args) => {
+
+module.exports.run = async (bot, message, args,) => {
 
     // database
 mongoose.connect(botconfig.mongoPass, {
@@ -14,7 +16,7 @@ mongoose.connect(botconfig.mongoPass, {
 // MODELS
 const Data = require("../models/data.js");
 
-
+    let user = message.author
     let timeout = 86400000;
     let reward = 250;
 
@@ -48,7 +50,7 @@ const Data = require("../models/data.js");
         } else {
             if(timeout - (Date.now() - data.daily) > 0) {
             let time = ms(timeout - (Date.now() - data.daily))
-             message.reply(collectagainembed);
+            message.reply(collectagainembed);
         } else {
          data.money += reward;
          data.daily = Date.now();
