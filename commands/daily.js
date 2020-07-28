@@ -1,6 +1,5 @@
 const Discord = require("discord.js")
 const ms = require("parse-ms");
-const { time } = require("console");
 const botconfig = require("../botconfig.json")
 const mongoose = require("mongoose");
 
