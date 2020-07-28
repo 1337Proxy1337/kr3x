@@ -1,6 +1,19 @@
 const Discord = require("discord.js");
 const money = require("../money.json");
 const fs = require("fs");
+const mongoose = require("mongoose");
+const botconfig = require("../botconfig.json")
+
+// database
+mongoose.connect(botconfig.mongoPass, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+// MODELS
+const Data = require("../models/data.js");
+const data = require("../models/data.js")
+
 
 module.exports.run = async (bot, message, args) => {
 
@@ -13,34 +26,78 @@ module.exports.run = async (bot, message, args) => {
       wingambleembed.setTitle("Gamble")
 
       wingambleembed.setColor("#00ff44");
+
+      let specifyabetembed = new Discord.MessageEmbed();
+      specifyabetembed.setTitle("Gamble")
+
+      let wholenumberembed = new Discord.MessageEmbed();
+      wholenumberembed.setTitle("Gamble")
+
+      let nocoinsembed = new Discord.MessageEmbed();
+      nocoinsembed = new Discord.MessageEmbed();
+
   
-    var maxBet = 9999999999
+    var maxBet = 9999999999;
     
 
-    if(!money[message.author.id] || money[message.author.id].money <= 0) return message.reply("you don't have any coins.");
 
-    if(!args[0]) return message.reply("please specify a bet.");
+    Data.findOne({
+        userID: user.id
+    }, (err, data) => {
+        if(err) console.log(err);
+        if(!data) {
+            const newData = new Data({
+                name: message.author.username,
+                userID: message.author.id,
+                lb: "all",
+                money: 0,
+                daily: 0,
+            })
+            newData.save().catch(err => console.log(err));
+            return message.reply(nocoinsembed)
+        } else {
+            var maxBet = 9999999999;
+
+        }
+    })
+    if(data.money <= 0) return message.reply(nocoinsembed);
+
+    if(!args[0]) return message.reply(specifyabetembed);
 
     try {
         var bet = parseFloat(args[0]);
     } catch {
-        return message.reply("you can only enter whole numbers.");
+
+        wholenumberembed.addFields ( (
+         { name: 'Bet', value: `You can only enter whole numbers.`}
+        )
+        )
+        return message.reply(wholenumberembed);
     }
 
-    if(bet != Math.floor(bet)) return message.reply("you can only enter whole numbers.");
+    if(bet != Math.floor(bet)) return message.reply(wholenumberembed);
 
-    if(money[message.author.id].money < bet) return message.reply("you don't have that much coins!");
+    nocoinsembed.addFields((
+    { name: 'Bet', value: `You don't have enough coins!`}
+    )
+    )
+
+    if(data.money < bet) return message.reply(nocoinsembed);
 
     if(bet > maxBet) return message.reply(`the maximum bet is ${maxBet.toLocaleString()}!`);
 
-    let chances = ["win","win","win","win","lose","lose","lose","lose","lose","lose"]
+    let chances = ["win","win","win","lose","lose","lose","lose","lose","lose","lose"]
     var pick = chances[Math.floor(Math.random() * chances.length)]
 
     if(pick === "lose") {
-        money[message.author.id].money -= bet;
-        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-            if(err) console.log(err);
-        }); 
+        data.money -= bet;
+        data.save().catch(err => console.log(err));
+
+        specifyabetembed.addFields( (
+            { name: 'Bet ', value: `Please specify a bet.`}
+                     
+        )
+        )
         
         lostgambleembed.addFields( (
         { name: 'You Lost! ', value: `You lost ${bet} coins by gambling!`}
@@ -48,10 +105,8 @@ module.exports.run = async (bot, message, args) => {
       )
        return message.reply(lostgambleembed);
     } else {
-        money[message.author.id].money += bet += bet;
-        fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-            if(err) console.log(err);
-        }); 
+        data.money += bet += bet;
+        data.save().catch(err => console.log(err));
         
               wingambleembed.addFields( (
           { name: 'You Won!', value: `You gained ${bet * 1} coins by gambling!`}
@@ -64,5 +119,5 @@ module.exports.run = async (bot, message, args) => {
 
   module.exports.help = {
     name: "gamble",
-    aliases: ["gamb"]
+    aliases: ["g"]
 }

@@ -25,9 +25,7 @@ const Data = require("../models/data.js");
 
     let collectagainembed = new Discord.MessageEmbed();
     collectagainembed.setTitle("Daily reward!")
-
-    let balanceembed = new Discord.MessageEmbed();
-    balanceembed.setTitle("Balance")
+    collectagainembed.setColor("#D4AF37")
 
     Data.findOne({
         userID: user.id
@@ -42,40 +40,36 @@ const Data = require("../models/data.js");
                 daily: Date.now(),
             })
             newData.save().catch(err => console.log(err));
-            balanceembed.addFields( (
-          { name: 'You have', value: `${reward} Coins!` }
-        )
-        )
-            message.channel.send(balanceembed)
         } else {
             if(timeout - (Date.now() - data.daily) > 0) {
             let time = ms(timeout - (Date.now() - data.daily))
+
+            collectagainembed.addFields( 
+                { name: 'You already collected your daily reward!', value: `collect again in ${time.hours}h ${time.minutes}m ${time.seconds}s` }
+              
+              )    
+              
             message.reply(collectagainembed);
         } else {
          data.money += reward;
          data.daily = Date.now();
          data.save().catch(err => console.log(err));
-         
-          message.reply(dailyembed); 
+
+         dailyembed.addFields(
+             { name: 'You collected', value: `your daily reward of ${reward} coins!`}
+         )
+          message.reply(dailyembed)
 
          collectagainembed.addFields( 
             { name: 'You already collected your daily reward!', value: `collect again in ${time.hours}h ${time.minutes}m ${time.seconds}s` }
           
           )          
 
-                  balanceembed.addFields( 
-      { name: 'You Have', value: `${data.money} Coins!` } 
-    
-                  )
-        }
+         }
     }
 }
     )
 }
-    
-
-      
-    
 
     module.exports.help = {
         name: "daily",

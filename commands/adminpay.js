@@ -1,50 +1,73 @@
 const money = require("../money.json");
 const Discord = require("discord.js")
 const fs = require("fs");
+const mongoose = require("mongoose");
+const botconfig = require("../botconfig.json")
+
+// database
+mongoose.connect(botconfig.mongoPass, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+// MODELS
+const Data = require("../models/data.js");
+const data = require("../models/data.js")
 
 module.exports.run = async (bot, message, args) => {
 
-    if(message.author.id != "644194388767146012") return message.reply("You can't use this command!")
-
     let adminpayembed = new Discord.MessageEmbed();
-    adminpayembed.setTitle("AdminPayout!")
+   
 
    let user = message.mentions.members.first() || bot.users.cache.get(args[0]);
    if(!user) return message.reply("Couldn`t find that user!")
 
-   if(!args[1]) return message.reply("Please specify the amount you want to pay.")
+   Data.findOne({
+       userID: message.author.id
+   }, (err, authorData) => {
+       if(err) console.log(err);
+       if(!authorData) {
+               return message.reply("You don't have any coins to send!")
+       } else {
+            Data.findOne({
+                userID: user.id
+            }, (err, userData) => {
+                if(err) console.log(err)
 
-   if(!money[user.id]) {
- 
-       money[user.id] = {
-           name: bot.users.cache.get(user.id).tag,
-           money: parseInt(args[1])
-       }
+                if(!args[1]) return message.reply("Please specify the amount you want to pay.");
+             
+             
+                if(!userData) {
+                    const newData = new Data({
+                        name: bot.users.cache.get(user.id).username,
+                        userID: user.id,
+                        lb: "all",
+                        money: parseInt(args[1]),
+                        daily: 0,
+                    })
+                     newData.save().catch(err => console.log(err));
+                } else {
+                   userData.money += parseInt(args[1]),
+                   userData.save().catch(err => console.log(err));
+                }
+            }    
+            )
+        }
+     }
+   )
 
 
-
-       fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-           if(err) console.log(err);
-       });
-
-   } else {
-
-    money[user.id].money += parseInt(args[1]);
-
-    fs.writeFile("./money.json", JSON.stringify(money), (err) => {
-        if(err) console.log(err);
-       });
-   }
-   adminpayembed.setTitle("Admin Payout")
+   adminpayembed.setTitle("Gift!")
    adminpayembed.addFields( (
        { name: 'You gifted', value: `${args[1]} Coins to ${bot.users.cache.get(user.id).username}!` }
      )
      )
-     adminpayembed.setColor("#db9c1d");
-    return message.channel.send(adminpayembed)
+     adminpayembed.setColor("#D4AF37");
+
+   message.reply(adminpayembed)
 }
 
 module.exports.help = {
-    name: "apay",
-    aliases: ["agive"]
+    name: "ap",
+    aliases: ["ag", "adp"]
 }
