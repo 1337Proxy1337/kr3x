@@ -63,7 +63,7 @@ const Data = require("../models/data.js");
 
            
             }else if(Discord.Guild.id === 732211012526276678) {
-                data.money += premiumreward;
+                data.money += reward * 2;
                 
                 data.save().catch(err => console.log(err));
 
